@@ -7,9 +7,9 @@
 		NavHamburger,
 		NavUl,
 		NavLi,
+		Chevron,
 		Button,
 		Dropdown,
-		Chevron,
 		DropdownItem
 	} from "flowbite-svelte";
 	import type { LayoutData } from "./$types";

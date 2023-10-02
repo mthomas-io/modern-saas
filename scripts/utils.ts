@@ -15,7 +15,7 @@ export async function startSupabase() {
 	if (port !== 54322) {
 		return;
 	}
-	execSync("pnpx supabase start");
+	execSync("npx supabase start");
 }
 
 export async function clearSupabaseData() {
@@ -50,11 +50,11 @@ export async function createUser(user: CreateUser) {
 }
 
 export async function createContact(user_id: string) {
-	const firstName = faker.name.firstName();
-	const lastName = faker.name.lastName();
+	const firstName = faker.person.firstName();
+	const lastName = faker.person.lastName();
 	const contact = {
 		name: `${firstName} ${lastName}`,
-		email: faker.internet.exampleEmail(firstName, lastName),
+		email: faker.internet.exampleEmail({firstName, lastName}),
 		company: faker.company.name(),
 		phone: faker.phone.number(),
 		user_id

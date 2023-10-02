@@ -1,4 +1,4 @@
-export type Json = string | number | boolean | null | { [key: string]: Json } | Json[];
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export interface Database {
 	graphql_public: {
@@ -47,29 +47,38 @@ export interface Database {
 					metadata?: Json | null;
 					user_id?: string;
 				};
+				Relationships: [
+					{
+						foreignKeyName: "billing_customers_user_id_fkey";
+						columns: ["user_id"];
+						referencedRelation: "users";
+						referencedColumns: ["id"];
+					}
+				];
 			};
 			billing_products: {
 				Row: {
 					active: boolean;
-					description: string;
+					description: string | null;
 					id: string;
 					metadata: Json | null;
 					name: string;
 				};
 				Insert: {
 					active: boolean;
-					description: string;
+					description?: string | null;
 					id: string;
 					metadata?: Json | null;
 					name: string;
 				};
 				Update: {
 					active?: boolean;
-					description?: string;
+					description?: string | null;
 					id?: string;
 					metadata?: Json | null;
 					name?: string;
 				};
+				Relationships: [];
 			};
 			billing_subscriptions: {
 				Row: {
@@ -114,6 +123,26 @@ export interface Database {
 					trial_start?: string | null;
 					user_id?: string;
 				};
+				Relationships: [
+					{
+						foreignKeyName: "billing_subscriptions_customer_id_fkey";
+						columns: ["customer_id"];
+						referencedRelation: "billing_customers";
+						referencedColumns: ["id"];
+					},
+					{
+						foreignKeyName: "billing_subscriptions_product_id_fkey";
+						columns: ["product_id"];
+						referencedRelation: "billing_products";
+						referencedColumns: ["id"];
+					},
+					{
+						foreignKeyName: "billing_subscriptions_user_id_fkey";
+						columns: ["user_id"];
+						referencedRelation: "users";
+						referencedColumns: ["id"];
+					}
+				];
 			};
 			contacts: {
 				Row: {
@@ -146,6 +175,14 @@ export interface Database {
 					updated_at?: string;
 					user_id?: string;
 				};
+				Relationships: [
+					{
+						foreignKeyName: "contacts_user_id_fkey";
+						columns: ["user_id"];
+						referencedRelation: "users";
+						referencedColumns: ["id"];
+					}
+				];
 			};
 			profiles: {
 				Row: {
@@ -166,6 +203,14 @@ export interface Database {
 					id?: string;
 					updated_at?: string;
 				};
+				Relationships: [
+					{
+						foreignKeyName: "profiles_id_fkey";
+						columns: ["id"];
+						referencedRelation: "users";
+						referencedColumns: ["id"];
+					}
+				];
 			};
 		};
 		Views: {
@@ -225,6 +270,14 @@ export interface Database {
 					public?: boolean | null;
 					updated_at?: string | null;
 				};
+				Relationships: [
+					{
+						foreignKeyName: "buckets_owner_fkey";
+						columns: ["owner"];
+						referencedRelation: "users";
+						referencedColumns: ["id"];
+					}
+				];
 			};
 			migrations: {
 				Row: {
@@ -245,6 +298,7 @@ export interface Database {
 					id?: number;
 					name?: string;
 				};
+				Relationships: [];
 			};
 			objects: {
 				Row: {
@@ -283,6 +337,14 @@ export interface Database {
 					updated_at?: string | null;
 					version?: string | null;
 				};
+				Relationships: [
+					{
+						foreignKeyName: "objects_bucketId_fkey";
+						columns: ["bucket_id"];
+						referencedRelation: "buckets";
+						referencedColumns: ["id"];
+					}
+				];
 			};
 		};
 		Views: {
@@ -314,7 +376,7 @@ export interface Database {
 				Args: {
 					name: string;
 				};
-				Returns: string[];
+				Returns: unknown;
 			};
 			get_size_by_bucket: {
 				Args: Record<PropertyKey, never>;

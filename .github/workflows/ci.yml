@@ -22,10 +22,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
+      # - name: Setup pnpm
+      #   uses: pnpm/action-setup@v2
+      #   with:
+      #     version: 8
 
       - name: Setup Node
         uses: actions/setup-node@v2
@@ -33,7 +33,7 @@ jobs:
           node-version: 18
 
       - name: Install Vercel CLI
-        run: pnpm i -g vercel@canary
+        run: npm i -g vercel@canary
 
       - name: Pull Dev Env. Vars.
         run: vercel env pull --yes --token=${{ secrets.VERCEL_TOKEN }}
@@ -47,13 +47,13 @@ jobs:
         run: supabase start -x imgproxy,studio,storage-api,realtime,inbucket,edge-runtime
 
       - name: Install Dependencies
-        run: pnpm install
+        run: npm install
 
       - name: Install Playwright Browsers
         run: pnpx playwright install --with-deps chromium
 
       - name: Test 🧪
-        run: pnpm test
+        run: npm run test
 
       - name: Link Supabase CLI to Prod
         run: supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}

@@ -31,10 +31,11 @@ async function seed() {
 		await syncStripeProducts();
 
 		for (const testUser of testUsers) {
-			const user = await createUser(testUser);
-			for (let i = 0; i < 4; i++) {
-				await createContact(user.id);
-			}
+			await createUser(testUser);
+			// const user = await createUser(testUser);
+			// for (let i = 0; i < 4; i++) {
+			// 	await createContact(user.id);
+			// }
 		}
 	} catch (err) {
 		console.error(err);
