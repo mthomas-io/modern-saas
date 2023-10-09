@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { RocketIcon } from "$lib/components/icons";
-	import { Button } from "flowbite-svelte";
 	import type { PageData } from "./$types";
 	import ProfileForm from "./ProfileForm.svelte";
 	import EmailForm from "./EmailForm.svelte";
 	import PasswordForm from "./PasswordForm.svelte";
-
+	import { Button } from "$lib/components/ui/button";
+	import { Rocket } from "radix-icons-svelte";
 	export let data: PageData;
 </script>
 
@@ -22,7 +21,7 @@
 		<!-- Current Plan & Billing Section -->
 		<section class="px-6">
 			<div class="flex items-center font-semibold">
-				<RocketIcon />
+				<Rocket />
 				<span class="ml-4">Current Plan & Billing</span>
 			</div>
 			<p class="mt-3 max-w-none text-sm">Manage your current plan and billing details</p>

@@ -1,27 +1,13 @@
 <script lang="ts">
-	import "../app.css";
-	import { page } from "$app/stores";
-	import {
-		Navbar,
-		NavBrand,
-		NavHamburger,
-		NavUl,
-		NavLi,
-		Chevron,
-		Button,
-		Dropdown,
-		DropdownItem
-	} from "flowbite-svelte";
+	import "../app.postcss";
+	import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
 	import type { LayoutData } from "./$types";
 	import { onMount } from "svelte";
 	import { invalidate } from "$app/navigation";
 	import { Toaster } from "svelte-french-toast";
-
-	const navigation = [
-		{ label: "Home", href: "/" },
-		{ label: "Pricing", href: "/pricing" },
-		{ label: "Contacts", href: "/contacts" }
-	];
+	import DashBoardMainNav from "$lib/components/DashBoardMainNav.svelte";
+	import Button from "$lib/components/ui/button/button.svelte";
+	import { ChevronDown, ExternalLink } from "radix-icons-svelte";
 
 	export let data: LayoutData;
 
@@ -45,42 +31,53 @@
 </svelte:head>
 <Toaster />
 <div class="flex h-full flex-col">
-	<Navbar let:hidden let:toggle>
-		<NavBrand href="/">
+	<div class="border-b">
+		<div class="flex h-16 items-center px-4">
 			<img src="/images/logo.png" class="mr-3 h-6 sm:h-9" alt="Contactly Logo" />
 			<span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
 				Contactly
 			</span>
-		</NavBrand>
-		<div class="flex md:order-2">
-			{#if session}
-				<Button color="light"><Chevron>Account</Chevron></Button>
-				<Dropdown>
-					<div slot="header" class="px-4 py-2">
-						<span class="block w-36 truncate text-xs font-medium">
-							{session.user.email}
-						</span>
+			<DashBoardMainNav class="mx-6" />
+			<div class="ml-auto flex items-center space-x-4">
+				{#if session}
+					<DropdownMenu.Root>
+						<DropdownMenu.Trigger>
+							<Button>
+								Account
+								<ChevronDown class="ml-2" />
+							</Button>
+						</DropdownMenu.Trigger>
+						<DropdownMenu.Content>
+							<DropdownMenu.Group>
+								<DropdownMenu.Label>{session.user.email}</DropdownMenu.Label>
+								<DropdownMenu.Separator />
+								<DropdownMenu.Item>
+									<a href="/account/billing" class="flex w-full items-center justify-between">
+										<span>Billing</span>
+										<ExternalLink />
+									</a>
+								</DropdownMenu.Item>
+								<DropdownMenu.Item>
+									<a href="/account" class="w-full">Setings</a>
+								</DropdownMenu.Item>
+								<DropdownMenu.Separator />
+								<DropdownMenu.Item>
+									<form action="/logout" method="POST" class="w-full">
+										<button type="submit" class="w-full text-left"> Sign out </button>
+									</form>
+								</DropdownMenu.Item>
+							</DropdownMenu.Group>
+						</DropdownMenu.Content>
+					</DropdownMenu.Root>
+				{:else}
+					<div class="flex items-center gap-2">
+						<Button href="/login" variant="ghost" size="sm">Login</Button>
+						<Button href="/register" size="sm" color="alternative">Register</Button>
 					</div>
-					<DropdownItem href="/account">Settings</DropdownItem>
-					<DropdownItem href="/account/billing">Billing</DropdownItem>
-					<form action="/logout" method="POST">
-						<DropdownItem type="submit" slot="footer">Sign out</DropdownItem>
-					</form>
-				</Dropdown>
-			{:else}
-				<div class="flex items-center gap-2">
-					<Button href="/login" size="sm">Login</Button>
-					<Button href="/register" size="sm" color="alternative">Register</Button>
-				</div>
-			{/if}
-			<NavHamburger on:click={toggle} />
+				{/if}
+			</div>
 		</div>
-		<NavUl {hidden}>
-			{#each navigation as nav}
-				<NavLi href={nav.href} active={$page.url.pathname === nav.href}>{nav.label}</NavLi>
-			{/each}
-		</NavUl>
-	</Navbar>
+	</div>
 	<div class="w-full flex-grow px-2 sm:px-4">
 		<div class="container mx-auto">
 			<slot />

@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { Button, ButtonGroup, Card } from "flowbite-svelte";
-
 	import type { PageData } from "./$types";
+	import { Button } from "$lib/components/ui/button";
+	import * as Card from "$lib/components/ui/card";
+	import * as Tabs from "$lib/components/ui/tabs";
+	import { goto } from "$app/navigation";
 	export let data: PageData;
 
-	$: ({ prices, interval } = data);
+	$: ({ prices, interval, isEligibleForTrial } = data);
 </script>
 
 <div class="py-20">
@@ -18,40 +20,59 @@
 		</p>
 	</div>
 	<div class="flex justify-center">
-		<ButtonGroup>
-			<Button color="blue" outline={interval !== "month"} href="/pricing">Monthly</Button>
-			<Button color="blue" outline={interval !== "year"} href="/pricing?interval=year"
-				>Yearly</Button>
-		</ButtonGroup>
+		<Tabs.Root value={interval}>
+			<Tabs.List>
+				<Tabs.Trigger
+					value="month"
+					on:click={() => goto("/pricing", { replaceState: true, noScroll: true })}
+					>Monthly</Tabs.Trigger>
+				<Tabs.Trigger
+					value="year"
+					on:click={() => goto("/pricing?interval=year", { replaceState: true, noScroll: true })}>
+					Yearly
+				</Tabs.Trigger>
+			</Tabs.List>
+		</Tabs.Root>
 	</div>
 	<!-- Pricing Card Grid -->
 	<div
 		class="isolate mx-auto mt-10 grid max-w-6xl grid-cols-1 justify-items-center gap-8 lg:grid-cols-3">
 		{#each prices as price, _i (price.id)}
 			<!-- Pricing Card -->
-			<Card padding="xl" class="w-full">
-				<h5 class="mb-4 text-xl font-medium text-gray-500 dark:text-gray-400">
-					{price.product.name}
-				</h5>
-				<div class="flex items-baseline text-gray-900 dark:text-white">
-					<span class="text-3xl font-semibold">$</span>
-					<span class="text-5xl font-extrabold tracking-tight">{price.unit_amount}</span>
-					<span class="ml-1 text-xl font-normal text-gray-500 dark:text-gray-400"
-						>/{price.unit_amount > 0 ? interval : "forever"}</span>
-				</div>
-				<ul class="my-7 space-y-6">
-					{#each price.product.features as feature}
-						<li class="flex space-x-2">
-							<span class="text-base font-normal leading-tight text-gray-500 dark:text-gray-400"
-								>{feature}</span>
-						</li>
-					{/each}
-				</ul>
-				<Button
-					class="w-full"
-					href={price.product.name === "Free" ? "/contacts" : `/api/stripe/checkout?id=${price.id}`}
-					>{price.product.call_to_action}</Button>
-			</Card>
+			<Card.Root class="w-full">
+				<Card.Header class="Header">
+					<h5 class="mb-4 text-xl font-medium text-gray-500 dark:text-gray-400">
+						{price.product.name}
+					</h5>
+					<div class="flex items-baseline text-gray-900 dark:text-white">
+						<span class="text-3xl font-semibold">$</span>
+						<span class="text-5xl font-extrabold tracking-tight">{price.unit_amount}</span>
+						<span class="ml-1 text-xl font-normal text-gray-500 dark:text-gray-400"
+							>/{price.unit_amount > 0 ? interval : "forever"}</span>
+					</div>
+				</Card.Header>
+				<Card.Content>
+					<ul class="my-7 space-y-6">
+						{#each price.product.features as feature}
+							<li class="flex space-x-2">
+								<span class="text-base font-normal leading-tight text-gray-500 dark:text-gray-400"
+									>{feature}</span>
+							</li>
+						{/each}
+					</ul>
+				</Card.Content>
+				<Card.Footer>
+					<Button
+						variant="default"
+						class="mx-auto"
+						href={price.product.name === "Free"
+							? "/contacts"
+							: `/api/stripe/checkout?id=${price.id}`}>
+						{isEligibleForTrial ? "Start trial" : "Upgrade now"}
+						<!-- {price.product.call_to_action} -->
+					</Button>
+				</Card.Footer>
+			</Card.Root>
 		{/each}
 	</div>
 </div>

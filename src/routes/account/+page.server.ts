@@ -1,6 +1,6 @@
 import { error, fail, redirect } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
-import { setError, superValidate } from "sveltekit-superforms/server";
+import { setError, setMessage, superValidate } from "sveltekit-superforms/server";
 import { emailSchema, passwordSchema, profileSchema } from "$lib/schemas";
 import { getSubscriptionTier } from "$lib/server/subscriptions";
 import { handleLoginRedirect } from "$lib/helpers";
@@ -61,7 +61,7 @@ export const actions: Actions = {
 			.eq("id", session.user.id);
 
 		if (profileError) {
-			return setError(profileForm, null, "Error updating your profile.");
+			return setError(profileForm, "Error updating your profile.");
 		}
 
 		return {
@@ -89,12 +89,11 @@ export const actions: Actions = {
 		});
 
 		if (emailError) {
+			console.error(emailError);
 			return setError(emailForm, "email", "Error updating your email.");
 		}
 
-		return {
-			emailForm
-		};
+		return setMessage(emailForm, "Check your inbox to confirm your new email!");
 	},
 	updatePassword: async (event) => {
 		const session = await event.locals.getSession();
@@ -121,7 +120,7 @@ export const actions: Actions = {
 		});
 
 		if (passwordError) {
-			return setError(passwordForm, null, "Error updating your password");
+			return setError(passwordForm, "Error updating your password");
 		}
 		return {
 			passwordForm

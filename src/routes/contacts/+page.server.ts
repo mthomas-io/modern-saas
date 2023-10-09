@@ -72,7 +72,7 @@ export const actions: Actions = {
 
 		if (createContactError) {
 			console.log(createContactError);
-			return setError(createContactForm, null, "Error creating contact.");
+			return setError(createContactForm, "Error creating contact.");
 		}
 
 		return {
@@ -101,7 +101,7 @@ export const actions: Actions = {
 			.eq("id", deleteContactForm.data.id);
 
 		if (deleteContactError) {
-			return setError(deleteContactForm, null, "Error deleting contact");
+			return setError(deleteContactForm, "Error deleting contact");
 		}
 
 		return {

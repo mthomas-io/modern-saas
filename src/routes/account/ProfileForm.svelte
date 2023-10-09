@@ -1,17 +1,35 @@
 <script lang="ts">
-	import UserIcon from "$lib/components/icons/UserIcon.svelte";
+	import { Button } from "$lib/components/ui/button";
 	import type { ProfileSchema } from "$lib/schemas";
-	import { Button } from "flowbite-svelte";
+	import { Person } from "radix-icons-svelte";
 	import { superForm } from "sveltekit-superforms/client";
-	import type { Validation } from "sveltekit-superforms/index";
-	export let data: Validation<ProfileSchema>;
+	import type { SuperValidated } from "sveltekit-superforms";
+	import toast from "svelte-french-toast";
+	export let data: SuperValidated<ProfileSchema>;
 
-	const { form, errors, enhance } = superForm(data);
+	const { form, errors, enhance } = superForm(data, {
+		onResult: ({ result }) => {
+			switch (result.type) {
+				case "success":
+					toast.success("Name updated!");
+					break;
+				case "error":
+					toast.error("Error updating your name.");
+					break;
+				case "failure":
+					toast.error("Validation error, check the details and try again.");
+					break;
+				default:
+					return;
+			}
+			return;
+		}
+	});
 </script>
 
 <section class="px-6 pt-16">
 	<div class="flex items-center font-semibold">
-		<UserIcon />
+		<Person />
 		<span class="ml-4">Personal Details</span>
 	</div>
 	<p class="mt-3 text-sm">Change the personal details associated with your account</p>

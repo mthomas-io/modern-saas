@@ -1,21 +1,13 @@
 <script lang="ts">
-	import {
-		Button,
-		Dropdown,
-		DropdownItem,
-		MenuButton,
-		Table,
-		TableBody,
-		TableBodyCell,
-		TableBodyRow,
-		TableHead,
-		TableHeadCell
-	} from "flowbite-svelte";
+	import { Button } from "$lib/components/ui/button";
+	import * as Table from "$lib/components/ui/table";
+	import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
 	import type { PageData } from "./$types";
 	import CreateContactModal from "./CreateContactModal.svelte";
 	import DeleteContactModal from "./DeleteContactModal.svelte";
 	import { hasReachedMaxContacts } from "$lib/helpers";
 	import UpgradePlanModal from "$lib/components/UpgradePlanModal.svelte";
+	import { DotsVertical } from "radix-icons-svelte";
 
 	export let data: PageData;
 	let createContactOpen = false;
@@ -47,39 +39,55 @@
 		<Button size="sm" on:click={handleContactCreate}>New Contact</Button>
 	</div>
 	<!-- Contacts Table -->
-	<Table shadow divClass="min-h-full">
-		<TableHead>
-			<TableHeadCell>Name</TableHeadCell>
-			<TableHeadCell>Email</TableHeadCell>
-			<TableHeadCell>Phone</TableHeadCell>
-			<TableHeadCell>Company</TableHeadCell>
-			<TableHeadCell />
-		</TableHead>
-		<TableBody>
+	<Table.Root>
+		<Table.Header>
+			<Table.Head>Name</Table.Head>
+			<Table.Head>Email</Table.Head>
+			<Table.Head>Phone</Table.Head>
+			<Table.Head>Company</Table.Head>
+			<Table.Head />
+		</Table.Header>
+		<Table.Body>
 			{#each data.contacts as contact, _i (contact.id)}
-				<TableBodyRow>
-					<TableBodyCell>{contact.name ?? "--"}</TableBodyCell>
-					<TableBodyCell>{contact.email ?? "--"}</TableBodyCell>
-					<TableBodyCell>{contact.phone ?? "--"}</TableBodyCell>
-					<TableBodyCell>{contact.company ?? "--"}</TableBodyCell>
-					<TableBodyCell>
-						<MenuButton class="dots-menu dark:text-white" vertical name="Contact Menu" />
-						<Dropdown placement="left-start">
-							<DropdownItem href="/contacts/{contact.id}">Edit</DropdownItem>
-							<DropdownItem slot="footer" on:click={() => handleContactDelete(contact.id)}
-								>Delete</DropdownItem>
-						</Dropdown>
-					</TableBodyCell>
-				</TableBodyRow>
+				<Table.Row>
+					<Table.Cell>{contact.name ?? "--"}</Table.Cell>
+					<Table.Cell>{contact.email ?? "--"}</Table.Cell>
+					<Table.Cell>{contact.phone ?? "--"}</Table.Cell>
+					<Table.Cell>{contact.company ?? "--"}</Table.Cell>
+					<Table.Cell>
+						<DropdownMenu.Root>
+							<DropdownMenu.Trigger>
+								<Button size="icon" variant="ghost">
+									<DotsVertical />
+								</Button>
+							</DropdownMenu.Trigger>
+							<DropdownMenu.Content>
+								<DropdownMenu.Group>
+									<DropdownMenu.Label>{contact.name}</DropdownMenu.Label>
+									<DropdownMenu.Separator />
+									<DropdownMenu.Item class="hover:cursor-pointer">
+										<a href="/contacts/{contact.id}" class="w-full">Edit</a>
+									</DropdownMenu.Item>
+									<DropdownMenu.Item
+										class="hover:cursor-pointer"
+										on:click={() => handleContactDelete(contact.id)}>
+										Delete
+									</DropdownMenu.Item>
+								</DropdownMenu.Group>
+							</DropdownMenu.Content>
+						</DropdownMenu.Root>
+					</Table.Cell>
+				</Table.Row>
 			{/each}
-		</TableBody>
-	</Table>
+		</Table.Body>
+	</Table.Root>
 </div>
 <CreateContactModal bind:open={createContactOpen} data={data.createContactForm} />
 <DeleteContactModal
 	bind:open={deleteContactOpen}
 	contactId={contactToDelete}
 	data={data.deleteContactForm} />
+
 <UpgradePlanModal
 	bind:open={upgradeModalOpen}
 	{tier}
