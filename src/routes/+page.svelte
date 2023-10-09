@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button } from "flowbite-svelte";
+	import Button from "$lib/components/ui/button/button.svelte";
 </script>
 
 <div class="py-20">
@@ -11,7 +11,7 @@
 		</p>
 	</div>
 	<div class="flex items-center justify-center gap-3">
-		<Button href="/pricing" size="lg">Get Started</Button>
-		<Button href="/pricing" color="light" size="lg">Learn More</Button>
+		<Button href="/pricing" variant="ghost">Get Started</Button>
+		<Button href="/pricing">Learn More</Button>
 	</div>
 </div>

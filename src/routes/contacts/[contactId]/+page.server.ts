@@ -52,7 +52,7 @@ export const actions: Actions = {
 			.eq("id", event.params.contactId);
 
 		if (updateContactError) {
-			return setError(updateContactForm, null, "Error updating contact, please try again later.");
+			return setError(updateContactForm, "Error updating contact, please try again later.");
 		}
 
 		return {

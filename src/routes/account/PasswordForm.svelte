@@ -1,19 +1,36 @@
 <script lang="ts">
-	import LockIcon from "$lib/components/icons/LockIcon.svelte";
+	import { Button } from "$lib/components/ui/button";
 	import type { PasswordSchema } from "$lib/schemas";
-	import { Button } from "flowbite-svelte";
+	import { LockClosed } from "radix-icons-svelte";
 	import { superForm } from "sveltekit-superforms/client";
-	import type { Validation } from "sveltekit-superforms/index";
-	export let data: Validation<PasswordSchema>;
+	import type { SuperValidated } from "sveltekit-superforms";
+	import toast from "svelte-french-toast";
+	export let data: SuperValidated<PasswordSchema>;
 
 	const { form, errors, enhance } = superForm(data, {
-		resetForm: true
+		resetForm: true,
+		onResult: ({ result }) => {
+			switch (result.type) {
+				case "success":
+					toast.success("Password updated!");
+					break;
+				case "error":
+					toast.error("Error updating your password.");
+					break;
+				case "failure":
+					toast.error("Validation error, check the details and try again.");
+					break;
+				default:
+					return;
+			}
+			return;
+		}
 	});
 </script>
 
 <section class="px-6 pt-16">
 	<div class="flex items-center font-semibold">
-		<LockIcon />
+		<LockClosed />
 		<span class="ml-4">Password</span>
 	</div>
 	<p class="mt-3 max-w-none text-sm">Change the password associated with your account</p>
